@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>lalala</title>
+		<script src="Grains4/vect3.js"></script>
+		<script src="Grains4/grain.js"></script>
+		<script src="Grains4/force.js"></script>
+		<script src="Grains4/mdynamics.js"></script>
+		<script src="Grains4/draw2d.js"></script>
+		<script src="Grains4/layout.js"></script>
+	</head>
+	<body>
+		<script>
+		//updatePosition();
+			var intitialConditions={
+				position: 1.0,
+				velocity: 0.0,
+				springConstant:100.0,
+				mass: 10.0
+				};
+			
+			var state ={
+				position: -1,
+				velocity:0,
+				springConstant:100,
+				mass: 6
+				};
+			
+			var state2 ={
+				position: 1,
+				velocity:0,
+				springConstant:100,
+				mass: 4
+				};
+			
+			//var N=1;
+			var N=2;
+			var i=0;
+			var grains = new Array(N);
+			
+			layout();
+			
+			grains[0]=new Grain;
+			grains[0].i=0;
+			grains[0].m=state.mass;
+			grains[0].r=new Vect3(state.position,1,0);
+			grains[0].c="#f00";
+			
+			grains[1]=new Grain;
+			grains[1].i=1;
+			grains[1].m=state2.mass;
+			grains[1].r=new Vect3(state2.position,1,0);
+			grains[1].c="#00f";
+			
+			
+			var deltaT=dt;
+			//for (var i=0; i<100; i++){
+			//updatePosition();
+			//}
+			function resetStateToInitialConditions() {
+				  state.position = initialConditions.position;
+				  state.velocity = initialConditions.velocity;
+				  state.springConstant = initialConditions.springConstant;
+				  state.mass = initialConditions.mass;
+				}
+			
+			function calculateAcceleration(x,massa){
+				return -(state.springConstant/massa)*x;
+				}
+				
+			function calculateAcceleration2object(x1,x2,massa){
+				return -(state.springConstant)*(x1-x2)/massa;
+				}
+				
+			function newVelocity(velocity, acceleration){
+				return velocity+deltaT*acceleration;
+				}
+			
+			function newPosition(position,velocity){
+				return position +deltaT*velocity;
+				}
+			
+						
+			function run() {
+				// Prepare variabel for saving sum of forces
+				var SF = new Array(N);
+				for(var iN = 0; iN < N; iN++) {
+					SF[iN] = new Vect3;
+				}
+				
+				for(var iN = 0; iN < N; iN++) {
+					for(var jN = 0; jN < N; jN++) {
+						var f = new Vect3;
+						if(jN != iN) {
+							f = Force.spring(grains[iN], grains[jN]);
+							SF[iN] = Vect3.add(SF[iN], f);
+						}
+					}
+				}
+				
+				
+				
+				//BUAT BARU
+				var acceleration = calculateAcceleration2object(state.position,state2.position,state.mass);
+				var acceleration2 = calculateAcceleration2object(state2.position, state.position,state2.mass);
+				state.velocity = newVelocity(state.velocity, acceleration);
+				state2.velocity = newVelocity(state2.velocity,acceleration2);
+				state.position = newPosition(state.position, state.velocity);
+				state2.position = newPosition(state2.position, state2.velocity);
+								
+				/*
+				//Calculate normal force
+				for(var iN = 0; iN < N; iN++) {
+					for(var jN = 0; jN < N; jN++) {
+						var f = new Vect3;
+						if(jN != iN) {
+							f = Force.norm(grains[iN], grains[jN]);
+							SF[iN] = Vect3.add(SF[iN], f);
+						}
+					}
+				}
+				*/
+				
+				console.log(grains[1].r.x);
+				var str = "t = " + t + " s";
+				var hout = document.getElementById("hout");
+				hout.innerHTML = str;
+				
+				clearCurrentFigure();
+				for(var iN = 0; iN < N; iN++) {
+					plotParticle(grains[iN]);
+				}
+				
+				for(var iN = 0; iN < N; iN++) {
+					Mdynamics.Euler(SF[iN], grains[iN]);
+				}
+				Mdynamics.inct();
+			}
+			
+			
+					
+		</script>
+	</body>
+</html>
