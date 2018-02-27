@@ -1,0 +1,94 @@
+<DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>spring satu butiran</title>
+		<script src="ref/grid4.js"></script>
+		<script src="ref/particle.js"></script>
+		<script src="ref/sphere.js"></script>
+		<script src="ref/vect3.js"></script>
+	</head>
+	<body>
+		<script>
+		function spring (){
+		
+			//Define spherical particles
+			var p = new Sphere();
+			var pars = [];
+			p.m = 12;
+			p.d = 0.2;
+			p.r = new Vect3 (0.25, 0, 0);
+			p.v = new Vect3 (0, 0, 0);
+			pars.push(p);
+			
+			//Define world coordinate
+			var xmin = -0.1;
+			var ymin = -0.1;
+			var xmax = 1.1;
+			var ymax = 1.1;
+			
+			//Define canvas size
+			var canvasWidth = 200;
+			var canvasHeight = 200;
+			
+			//define canvas coordinate
+			XMIN = 0;
+			YMIN = canvasHeight;
+			XMAX = canvasWidth;
+			YMAX = 0;
+			
+			//create a canvas
+			var c = document.createElement("canvas");
+			c.id = "drawingboard";
+			c.width = canvasWidth;
+			c.height = canvasHeight;
+			c.style.border = "1px solid #ccc";
+			
+			//Create some divs
+			var d;
+			d = document.createElement("div");
+			d.id = "ekin";
+			document.body.appendChild(d);
+			d = document.createElement("div");
+			d.id = "hidtext";
+			document.body.appendChild(d);
+			
+			//Draw a circle
+			function drawSphere(id, s, color) {
+				var cx = document.getElementById(id).getContext("2d");
+				cx.strokeStyle = color;
+				cx.beginPath();
+				var rr = transform({x: s.r.x, y: s.r.y});
+				var rr2 = transform({x: s.r.x + s.d, y: s.r.y});
+				var DD = rr2.x - rr.x;
+				cx.arc(rr.x, rr.y, 0.5 * DD, 0,2 * Math.PI);
+				cx.stroke();
+			}
+			
+			//clear canvas with color
+			function clearCanvas(){
+				var id = arguments[0];
+				var el = document.getElementById(id);
+				var color = arguments [1];
+				var cx = el.getContext("2d");
+				cx.fillStyle = color;
+				cx.fillRect(0, 0, c.width, c.height);
+			}
+			
+			//Transform (x, y) to (X, Y)
+			function transform(r){
+				var X = (r.x - xmin) / (xmax - xmin) * (XMAX - XMIN);
+				X += XMIN;
+				var Y = (r.y - ymin) / (ymax - ymin) * (YMAX - YMIN);
+				Y += YMIN;
+				return {x: X, y:Y};
+			}
+			
+			
+			
+			
+		
+		}
+		</script>
+	</body>
+</html>

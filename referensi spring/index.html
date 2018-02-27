@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<!--
+	index.html
+	HTML file for executing JavaScript examples in script.js
+	as given in FI4278 lecture at Institut Teknologi Bandung,
+	Indonesia
+	
+	Sparisoma Viridi | dudung@gmail.com
+	
+	20180116
+	Create this HTML file.
+	20180120
+	With doi:10.5281/zenodo.1156151 upload to Zenodo.
+	Learn to update and get 10.5281/zenodo.1156161 as new doi.
+	Must not too often updating. PDF is not update yet.
+	Doi: 10.5281/zenodo.1156150 for all versions.
+	20180129
+	Learn how to use vect3.js in operating vector algebra.
+	20180130
+	Use particle.js for simulation of several bodies
+	interacting with gravitational force.
+	20180213
+	Integrate MathJax, setInterval, granular collision.
+-->
+<html>
+	<head>
+		<meta charset="iso-8859-1" />
+		<title></title>
+		<!-- MathJax --->
+		<script type="text/javascript" async
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+		</script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				TeX: { equationNumbers: { autoNumber: "AMS" } }
+			});
+		</script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+			});
+		</script>
+		<script>
+				function UpdateMath(id, TeX) {
+				// Set innerHTML
+				document.getElementById(id).innerHTML = TeX;
+
+				// Reprocess the element
+				MathJax.Hub.Queue(["Typeset", MathJax.Hub, id])
+			}
+		</script>
+		<!-- MathJax --->
+	</head>
+	<body>
+		<script src="vect3.js"></script>
+		<script src="particle.js"></script>
+		<script src="sphere.js"></script>
+		<script src="grid4.js"></script>
+		<script src="scripts.js"></script>
+	</body>
+</html>
