@@ -10,11 +10,13 @@
 	</head>
 	<body>
 		<script>
+		spring();
 		function spring (){
 		
 			//Define spherical particles
 			var p = new Sphere();
 			var pars = [];
+			p = new Sphere();
 			p.m = 12;
 			p.d = 0.2;
 			p.r = new Vect3 (0.25, 0, 0);
@@ -84,11 +86,97 @@
 				return {x: X, y:Y};
 			}
 			
+			//spring
+			function springforce(p){
+				//define force variable
+				var F = new Vect3();
+				
+				//define constants
+				var k = 10;
+				var L = new Vect3 (1, 0, 0);
+				var L0 = new Vect3(0, 0, 0);
+				if (t < 10){
+					L0.x = 0.1 * t;
+					}
+				else { L0 = 1;}
+				L = Vect3.sub(L, L0);
+				var f = k * L;
+				
+				F = f;
+				return F;
+			}
 			
+			var TBEG = new Date().getTime()
+			console.log("BEG: " + TBEG);
+			var tbeg = 0;
+			var tend = 1000;
+			var dt = 5E-2;
+			var t = tbeg;
+			var NT = 100;
+			var iT = 0;
+			var NT2 = 10;
+			var iT2 = 0;
 			
+			var div = document.createElement("div");
+			div.style.textAlign = "center";
+			var bl = document.createElement("button");
+			bl.innerHTML = "Start";
+			div.append(c);
+			div.appendChild(bl);
+			document.body.append(div);
+			var iter;
 			
-		
-		}
+			bl.addEventListener("click", function(){
+				if(bl.innerHTML == "Start") {
+					bl.innerHTML = "Stop";
+					iter = setInterval(simulate, 5);
+				} else {
+					bl.innerHTML = "Start";
+					clearInterval(iter);
+				}
+			});
+			
+			function calculate(){
+				var F = springforce(p);
+				//calculate acceleration
+				p.a = Vect3.div(F, p.m);
+				console.log(p.a);
+				
+				//Euler
+				p.v = Vect3.add(p.v, Vect3.mul(p.a, dt));
+				p.r = Vect3.add(p.r, Vect3.mul(p.v, dt));
+				
+						
+				//increase time
+				t += dt;
+				
+				//Sop simulation
+				if(t>tend){
+					clearInterval(iter);
+					var TEND = new Date().getTime();
+					console.log("END: " + TEND);
+					var TDUR = TEND - TBEG;
+					console.log("DUR: " +TDUR);
+				}
+			}
+			
+			function simulate(){
+				calculate();
+				
+				iT++;
+				iT2++;
+				
+				if (iT2 >= NT2){
+					//clear and draw
+					clearCanvas("drawingboard", "#fff");
+					var M = pars.length;
+					for(var j = 0; j < M; j++){
+						drawSphere("drawingboard", pars[j], "#00f");
+						}
+					iT2=0;
+				}
+			}
+		}				
 		</script>
 	</body>
 </html>
