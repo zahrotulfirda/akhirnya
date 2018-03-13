@@ -1,0 +1,15 @@
+title: Mass and Spring
+logo-image: MassAndSpring/MassAndSpring.png
+author: Wolfgang Christian; Francisco Esquembre
+copyright: Wolfgang Christian
+author-image: images/WC_logo.png;./IMAGES/PacoEsquembre2011.png
+main-script: MassAndSpring_Simulation.js
+main-simulation: MassAndSpring_Simulation.xhtml
+html-contents: MassAndSpring_Contents.xhtml
+html-main: MassAndSpring.xhtml
+page-title: Mass and Spring
+page-index: MassAndSpring_Simulation.xhtml
+resource: MassAndSpring/MassAndSpring.html
+resource: MassAndSpring/MassAndSpring.png
+resource: images/WC_logo.png
+resource: IMAGES/PacoEsquembre2011.png
