@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Gelombang</title>
+		<script src="Grains4/vect3.js"></script>
+		<script src="Grains4/grain.js"></script>
+		<script src="Grains4/force.js"></script>
+		<script src="Grains4/mdynamics.js"></script>
+		<script src="Grains4/draw2d.js"></script>
+		<script src="Grains4/layout.js"></script>
+	</head>
+	<body>
+		<script>
+			
+			var timer1;
+			var N = 64;
+			var grains = new Array(N);
+
+			layout();
+			initiate();
+			
+			function initiate() {
+				Mdynamics.setdt(1E-3);
+				
+				var m1 = 1;
+				var c1 = "#f00";
+				var m2 = 4;
+				var c2 = "#00f";
+				
+				var D = 1;
+				//var Nx = Math.sqrt(N);
+				//var Ny = Math.sqrt(N);
+				var Nx = N;
+				var Ny = N;
+				var x0 = -4;
+				var y0 = -4;
+				var i = 0;
+				for(var iy = 0; iy < Ny; iy++) {
+					var y = y0 + (iy + 0.5) * D;
+					for(var ix = 0; ix < Nx; ix++) {
+						grains[i] = new Grain;
+						grains[i].i = i;
+						var x = x0 + (ix + 0.5) * D;
+						grains[i].r = new Vect3(x, y, 0);
+						var cR = 128;
+						var cG = (16 - i) * 16;
+						var cB = i * 16;
+						if(i < 0.5 * N) {
+							grains[i].m = m1;
+							grains[i].c = c1;
+						} else {
+							grains[i].m = m2;
+							grains[i].c = c2;
+						}
+						grains[i].D = 0.5 * D;
+						i++;
+					}
+				}
+				
+				for(var iN = 0; iN < N; iN++) {
+					plotParticle(grains[iN]);
+				}
+			}
+			
+			function run() {
+				// Prepare variabel for saving sum of forces
+				var SF = new Array(N);
+				for(var iN = 0; iN < N; iN++) {
+					SF[iN] = new Vect3;
+				}
+				
+				// Calculate viscous force
+				for(var iN = 0; iN < N; iN++) {
+					var f = Force.visc(grains[iN]);
+					SF[iN] = Vect3.add(SF[iN], f);
+				}
+				
+				// Calculate gravitation force
+				for(var iN = 0; iN < N; iN++) {
+					for(var jN = 0; jN < N; jN++) {
+						var f = new Vect3;
+						if(jN != iN) {
+							f = Force.grav(grains[iN], grains[jN]);
+							SF[iN] = Vect3.add(SF[iN], f);
+						}
+					}
+				}
+				
+				// Calculate normal force
+				for(var iN = 0; iN < N; iN++) {
+					for(var jN = 0; jN < N; jN++) {
+						var f = new Vect3;
+						if(jN != iN) {
+							f = Force.norm(grains[iN], grains[jN]);
+							SF[iN] = Vect3.add(SF[iN], f);
+						}
+					}
+				}
+				
+				var str = "t = " + t + " s";
+				var hout = document.getElementById("hout");
+				hout.innerHTML = str;
+				
+				clearCurrentFigure();
+				for(var iN = 0; iN < N; iN++) {
+					plotParticle(grains[iN]);
+				}
+				
+				for(var iN = 0; iN < N; iN++) {
+					Mdynamics.Euler(SF[iN], grains[iN]);
+				}
+				Mdynamics.inct();
+			}
+		</script>
+	</body>
+</html>
