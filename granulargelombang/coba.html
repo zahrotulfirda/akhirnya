@@ -14,11 +14,7 @@
 		<script>
 			
 			var timer1;
-<<<<<<< HEAD
 			var N = 5;
-=======
-			var N = 2;
->>>>>>> 1fd5cd393293b18c4c3d3c5c5f91ca77b8fb8d08
 			var grains = new Array(N);
 
 			layout();
@@ -41,9 +37,9 @@
 				var y0 = 0;
 				var i = 0;
 				var l = 2.5;
+				var R = 2;
 				for(var iy = 0; iy < Ny; iy++) {
-					var y = y0 + (iy + 0.5) * D + (iy*l);
-					for(var ix = 0; ix < Nx; ix++) {
+						var y = y0 + (iy + 0.5) * D + (iy*l);
 						grains[i] = new Grain;
 						grains[i].i = i;
 						var x = x0 + (ix + 0.5) * D + (ix*l);
@@ -51,7 +47,6 @@
 						var cR = 128;
 						var cG = (16 - i) * 16;
 						var cB = i * 16;
-<<<<<<< HEAD
 						if(i < 0.5 * N) {
 							grains[i].m = m1;
 							grains[i].c = c1;
@@ -59,13 +54,9 @@
 							grains[i].m = m1;
 							grains[i].c = c1;
 						}
-=======
-						grains[i].m = m1;
-						grains[i].c = c1;
->>>>>>> 1fd5cd393293b18c4c3d3c5c5f91ca77b8fb8d08
 						grains[i].D = 0.9 * D;
 						i++;
-					}
+					
 				}
 				
 				for(var iN = 0; iN < N; iN++) {
