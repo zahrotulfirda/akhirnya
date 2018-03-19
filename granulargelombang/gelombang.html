@@ -14,18 +14,14 @@
 		<script>
 			
 			var timer1;
-<<<<<<< HEAD
-			var N = 5;
-=======
-			var N = 2;
->>>>>>> 1fd5cd393293b18c4c3d3c5c5f91ca77b8fb8d08
+			var N = 3;
 			var grains = new Array(N);
 
 			layout();
 			initiate();
 			
 			function initiate() {
-				Mdynamics.setdt(1E-3);
+				Mdynamics.setdt(1E-2);
 				
 				var m1 = 1;
 				var c1 = "#f00";
@@ -37,7 +33,7 @@
 				//var Ny = Math.sqrt(N);
 				var Nx = N;
 				var Ny = N;
-				var x0 = -9;
+				var x0 = 0;
 				var y0 = 0;
 				var i = 0;
 				var l = 2.5;
@@ -51,29 +47,20 @@
 						var cR = 128;
 						var cG = (16 - i) * 16;
 						var cB = i * 16;
-<<<<<<< HEAD
-						if(i < 0.5 * N) {
-							grains[i].m = m1;
-							grains[i].c = c1;
-						} else {
-							grains[i].m = m1;
-							grains[i].c = c1;
-						}
-=======
 						grains[i].m = m1;
-						grains[i].c = c1;
->>>>>>> 1fd5cd393293b18c4c3d3c5c5f91ca77b8fb8d08
+						grains[i].c = c1;						
 						grains[i].D = 0.9 * D;
 						i++;
 					}
 				}
+				//grains[2].v = 0.001;
 				
 				for(var iN = 0; iN < N; iN++) {
 					plotParticle(grains[iN]);
 				}
 			}
 			
-			console.log(grains[0].r.x, grains[1].r.x);
+			console.log(grains[0].r.x, grains[1].r.x, grains[2].r.x);
 			
 			function run() {
 				// Prepare variabel for saving sum of forces
@@ -100,19 +87,37 @@
 					}
 				}
 				*/
-				
+
 				// Calculate spring force
+					var k = 0;
 				for(var iN = 0; iN < N; iN++) {
-					for(var jN = 0; jN < N; jN++) {
-						var f = new Vect3;
-						//var jN = iN+1;
-						if(jN != iN) {
-							f = Force.spring(grains[iN], grains[jN]);
-							SF[iN] = Vect3.add(SF[iN], f);
-						}
+					var f1 = new Vect3;
+					var f2 = new Vect3;
+					var f = new Vect3;
+				
+					
+					if (k == 0){
+						f = Force.spring(grains[k], grains[k+1]);
+						SF[k] = f;
 					}
-					//SF[iN] = Vect3.add(SF[iN], f);
-				}
+					else if (k == N-1){
+						f = Force.spring(grains[k-1], grains[k]);
+						SF[k] = f;
+					}
+					else if (k < (N-1) && k>0){
+					
+						f1 = Force.spring(grains[k-1], grains[k]);
+						f2 = Force.spring(grains[k], grains[k+1]);
+						f = Vect3.add(f1,f2);
+						SF[k] = f;
+					}
+					
+					k++;
+					}
+					
+					
+				
+				
 				
 				/*
 				// Calculate normal force

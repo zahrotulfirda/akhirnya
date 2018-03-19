@@ -21,7 +21,7 @@ kR = 1E5;
 kV = 1.0;
 kE = 1.0;
 kV2 = 40.0;
-ks=1.0;
+ks=0.1;
 
 // Class of Force
 function Force() {
@@ -83,13 +83,34 @@ Force.visc = function(p) {
 Force.spring= function(p1, p2){
 	var r1 = p1.r;
 	var r2 = p2.r;
-	var a = Vect3.sub(r1, r2);
-	//var l = Vect3.len(r1, r2);
-	var dx = Math.sqrt(Vect3.dot(a,a));
-	var r = Vect3.sub(r1, r2);
-	var u = Vect3.uni(r);
-	var f = Vect3.mul(-ks * (dx-(2.5)), u);
+	var r12 = Vect3.sub(r1, r2);
+	var r12len = Vect3.len(r12);
+	//var dx = Math.sqrt(Vect3.dot(r12,r12));
+	var u = Vect3.uni(r12);
+	var dx = Vect3.mul((r12len-4),u);
+	var f = Vect3.mul(-ks,dx);
+	//var f = Vect3.mul((-ks * (r12len-2.5)), u);
 	
+	return f;
+	}
+	
+Force.spring2= function(p1, p2, p3){
+	var r1 = p1.r;
+	var r2 = p2.r;
+	var r3 = p3.r;	
+	var r12 = Vect3.sub(r1, r2);
+	var r12len = Vect3.len(r12);
+	var r23 = Vect3.sub(r2, r3);
+	var r23len = Vect3.len(r23);
+	//var dx = Math.sqrt(Vect3.dot(r12,r12));
+	var u1 = Vect3.uni(r12);
+	var u2 = Vect3.uni(r23);
+	var dx1 = Vect3.mul((r12len-2.5),u1);
+	var dx2 = Vect3.mul((r23len-2.5),u2);
+	var dx = Vect3.add(dx1,dx2);
+	var f = Vect3.mul(-ks,dx);
+	
+	console.log(r12len);
 	
 	return f;
 	}
