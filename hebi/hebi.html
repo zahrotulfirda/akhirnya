@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="ISO-8859-1">
-		<title>Gelombang</title>
+		<title>Hebi</title>
 		<script src="Grains4/vect3.js"></script>
 		<script src="Grains4/grain.js"></script>
 		<script src="Grains4/force.js"></script>
@@ -14,7 +14,7 @@
 		<script>
 			
 			var timer1;
-			var N = 10;
+			var N = 9;
 			var grains = new Array(N);
 
 			layout();
@@ -37,12 +37,19 @@
 				var y0 = 0;
 				var i = 0;
 				var l = 2.5;
-				for(var iy = 0; iy < Ny; iy++) {
-					var y = y0 + (iy + 0.5) * D + (iy*l);
-					for(var ix = 0; ix < Nx; ix++) {
+				var k = 0;
+				for(var ix = 0; ix < Nx; ix++) {
 						grains[i] = new Grain;
 						grains[i].i = i;
+						var iy = 1;
+						
 						var x = x0 + (ix + 0.5) * D + (ix*l);
+						if (ix % 2 == 0){
+							var y = y0 + (iy + 0.5) * D + (iy*l) + 1;
+						}
+						else{
+							var y = y0 + (iy + 0.5) * D + (iy*l);
+						}
 						grains[i].r = new Vect3(x, y, 0);
 						var cR = 128;
 						var cG = (16 - i) * 16;
@@ -51,8 +58,8 @@
 						grains[i].c = c1;						
 						grains[i].D = 0.9 * D;
 						i++;
-					}
 				}
+				
 				//grains[2].v = 0.001;
 				
 				for(var iN = 0; iN < N; iN++) {
@@ -60,7 +67,7 @@
 				}
 			}
 			
-			console.log(grains[0].r.x, grains[1].r.x, grains[2].r.x);
+			console.log(grains[0].r.y, grains[1].r.y, grains[2].r.y);
 			
 			function run() {
 				// Prepare variabel for saving sum of forces
@@ -88,30 +95,58 @@
 				}
 				*/
 
-				// Calculate gspring force
+				// Calculate gravitation force
 				for(var iN = 0; iN < N; iN++) {
 					if (iN == 0){
+						var f1 = new Vect3;
+						var f2 = new Vect3;
 						var f = new Vect3;
-						f = Force.spring(grains[iN], grains[iN+1]);
+						f1 = Force.spring(grains[iN], grains[iN+1]);
+						f2 = Force.spring2(grains[iN], grains[iN+2]);
+						f = Vect3.add(f1,f2);
 						SF[iN] = Vect3.add(SF[iN], f);
 					}
 					else if (iN == (N-1)){
+						var f1 = new Vect3;
+						var f2 = new Vect3;
 						var f = new Vect3;
-						f = Force.spring(grains[iN], grains[iN-1]);
+						f1 = Force.spring(grains[iN], grains[iN-1]);
+						f2 = Force.spring2(grains[iN], grains[iN-2]);
+						f = Vect3.add(f1,f2);
 						SF[iN] = Vect3.add(SF[iN], f);
 					}
 					else{
+						var f = new Vect3;
 						for(var jN = iN-1; jN < iN+2; jN++) {
-							var f = new Vect3;
+							var f1 = new Vect3;
 							if(jN != iN) {
-								f = Force.spring(grains[iN], grains[jN]);
-								SF[iN] = Vect3.add(SF[iN], f);
-								//SF[iN]=f;
+								f1 = Force.spring(grains[iN], grains[jN]);
+								SF[iN] = Vect3.add(SF[iN], f1);
+							
 							}
 						}
+						if(iN % 2 == 0){
+							var f21 = new Vect3;
+							var f22 = new Vect3;
+							var f2 = new Vect3;
+							f21 = Force.spring2(grains[iN], grains[iN-2]);
+							f22 = Force.spring2(grains[iN], grains[iN+2]);
+							f2 = Vect3.add(f21, f22);
+							SF[iN] = Vect3.add(SF[iN], f2);
+						}
+						else {
+							var f2 = new Vect3;
+							f2.x = 0; f2.y = 0; f2.z = 0;
+							SF[iN] = Vect3.add(SF[iN], f2);
+						}
+					
 					}
-				console.log(SF[2]);
 				}
+					
+				console.log(SF[2]);	
+				
+				
+				
 				
 				/*
 				// Calculate normal force
