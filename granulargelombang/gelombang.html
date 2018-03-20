@@ -14,14 +14,14 @@
 		<script>
 			
 			var timer1;
-			var N = 3;
+			var N = 9;
 			var grains = new Array(N);
 
 			layout();
 			initiate();
 			
 			function initiate() {
-				Mdynamics.setdt(1E-2);
+				Mdynamics.setdt(1E-3);
 				
 				var m1 = 1;
 				var c1 = "#f00";
@@ -33,7 +33,7 @@
 				//var Ny = Math.sqrt(N);
 				var Nx = N;
 				var Ny = N;
-				var x0 = 0;
+				var x0 = -15;
 				var y0 = 0;
 				var i = 0;
 				var l = 2.5;
@@ -88,36 +88,30 @@
 				}
 				*/
 
-				// Calculate spring force
-					var k = 0;
+				// Calculate gravitation force
 				for(var iN = 0; iN < N; iN++) {
-					var f1 = new Vect3;
-					var f2 = new Vect3;
-					var f = new Vect3;
-				
-					
-					if (k == 0){
-						f = Force.spring(grains[k], grains[k+1]);
-						SF[k] = f;
+					if (iN == 0){
+						var f = new Vect3;
+						f = Force.spring(grains[iN], grains[iN+1]);
+						SF[iN] = Vect3.add(SF[iN], f);
 					}
-					else if (k == N-1){
-						f = Force.spring(grains[k-1], grains[k]);
-						SF[k] = f;
+					else if (iN == (N-1)){
+						var f = new Vect3;
+						f = Force.spring(grains[iN], grains[iN-1]);
+						SF[iN] = Vect3.add(SF[iN], f);
 					}
-					else if (k < (N-1) && k>0){
-					
-						f1 = Force.spring(grains[k-1], grains[k]);
-						f2 = Force.spring(grains[k], grains[k+1]);
-						f = Vect3.add(f1,f2);
-						SF[k] = f;
+					else{
+						for(var jN = iN-1; jN < iN+2; jN++) {
+							var f = new Vect3;
+							if(jN != iN) {
+								f = Force.spring(grains[iN], grains[jN]);
+								SF[iN] = Vect3.add(SF[iN], f);
+								//SF[iN]=f;
+							}
+						}
 					}
-					
-					k++;
-					}
-					
-					
-				
-				
+				console.log(SF[2]);
+				}
 				
 				/*
 				// Calculate normal force

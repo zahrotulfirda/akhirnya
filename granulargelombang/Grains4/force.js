@@ -21,7 +21,7 @@ kR = 1E5;
 kV = 1.0;
 kE = 1.0;
 kV2 = 40.0;
-ks=0.1;
+ks=1;
 
 // Class of Force
 function Force() {
@@ -85,11 +85,14 @@ Force.spring= function(p1, p2){
 	var r2 = p2.r;
 	var r12 = Vect3.sub(r1, r2);
 	var r12len = Vect3.len(r12);
+	
 	//var dx = Math.sqrt(Vect3.dot(r12,r12));
 	var u = Vect3.uni(r12);
-	var dx = Vect3.mul((r12len-4),u);
+	var dx = Vect3.mul((r12len-2.5),u);
 	var f = Vect3.mul(-ks,dx);
+	//console.log(f);
 	//var f = Vect3.mul((-ks * (r12len-2.5)), u);
+	//console.log(r12len, f, dx);
 	
 	return f;
 	}

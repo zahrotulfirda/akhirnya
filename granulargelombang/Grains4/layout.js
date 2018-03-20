@@ -47,7 +47,7 @@ function layout() {
 	
 	// Prepare canvas
 	setCanvasCoordinates("canvas");
-	setWorldCoordinates(-10, -10, 10, 10);
+	setWorldCoordinates(-20, -20, 20, 20);
 	
 	// Create start button
 	var b1 = document.createElement("button");
