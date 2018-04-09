@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Gelombang</title>
+		<script src="Grains4/vect3.js"></script>
+		<script src="Grains4/grain.js"></script>
+		<script src="Grains4/force.js"></script>
+		<script src="Grains4/mdynamics.js"></script>
+		<script src="Grains4/draw2d.js"></script>
+		<script src="Grains4/layout.js"></script>
+	</head>
+	<body>
+		<script>
+			
+			var timer1;
+			var N = 25;
+			var grains = new Array(N);
+
+			layout();
+			initiate();
+			
+			function initiate() {
+				Mdynamics.setdt(1E-3);
+				
+				var m1 = 1;
+				var c1 = "#f00";
+				var m2 = 4;
+				var c2 = "#00f";
+				
+				var D = 1;
+				//var Nx = Math.sqrt(N);
+				//var Ny = Math.sqrt(N);
+				var Nx = 9;
+				var Ny = 25;
+				var x0 = -18;
+				var y0 = -18;
+				var i = 0;
+				var l = 2.5;
+				var teta=0;
+				var teta2=0;
+				for(var iy = 0; iy < Ny; iy++) {
+					var x = y0 + (iy + 0.5) * D + Math.cos(teta);
+						grains[i] = new Grain;
+						grains[i].i = i;
+						var y = x0 + (iy + 0.5) * D  + Math.sin(teta) ;
+						grains[i].r = new Vect3(x, y, 0);
+						var cR = 128;
+						var cG = (16 - i) * 16;
+						var cB = i * 16;
+						grains[i].m = m1;
+						grains[i].c = c1;						
+						grains[i].D = 0.9 * D;
+						i++;
+						teta=teta+0.5;
+						//teta2=teta2+0.2;
+					
+				}
+				//grains[2].v = 0.001;
+				//console.log(i);
+				/*
+				i = 9;
+				var y2 =0;
+				for(var iy = 0; iy < Ny-1; iy++) {
+					var x2 = y0+grains[iy].r.x-2;
+						grains[i] = new Grain;
+						grains[i].i = i;
+						y2 = x0+(iy + 0.5) * D +(iy*l) +(grains[iy+1].r.y-grains[iy].r.y)/2;
+						//console.log(y2);
+						grains[i].r = new Vect3(x2, y2, 0);
+						grains[i].m = m1;
+						grains[i].c = c1;						
+						grains[i].D = 0.1 * D;
+						i++;
+					
+				}
+				
+				i = 17;
+				var y2 =0;
+				for(var iy = 0; iy < Ny-1; iy++) {
+					var x2 = y0+grains[iy].r.x+2;
+						grains[i] = new Grain;
+						grains[i].i = i;
+						y2 = x0+(iy + 0.5) * D +(iy*l) +(grains[iy+1].r.y-grains[iy].r.y)/2;
+						//console.log(y2);
+						grains[i].r = new Vect3(x2, y2, 0);
+						grains[i].m = m1;
+						grains[i].c = c1;						
+						grains[i].D = 0.1 * D;
+						i++;
+					
+				}
+				
+				*/
+				
+				
+				for(var iN = 0; iN < N; iN++) {
+					plotParticle(grains[iN]);
+				}
+			}
+			
+			//console.log(grains[0].r.y, grains[1].r.y, grains[5].r.y);
+			
+			function run() {
+				// Prepare variabel for saving sum of forces
+				var SF = new Array(N);
+				for(var iN = 0; iN < N; iN++) {
+					SF[iN] = new Vect3;
+				}
+				
+				/*
+				// Calculate viscous force
+				for(var iN = 0; iN < N; iN++) {
+					var f = Force.visc(grains[iN]);
+					SF[iN] = Vect3.add(SF[iN], f);
+				}
+				
+				// Calculate gravitation force
+				for(var iN = 0; iN < N; iN++) {
+					for(var jN = 0; jN < N; jN++) {
+						var f = new Vect3;
+						if(jN != iN) {
+							f = Force.grav(grains[iN], grains[jN]);
+							SF[iN] = Vect3.add(SF[iN], f);
+						}
+					}
+				}
+				
+
+				// Calculate gspring force
+				var num=9;
+				var num2=17;
+				for(var iN = 0; iN < 9; iN++) {
+					if (iN == 0){
+						var f1 = new Vect3;
+						var f2 = new Vect3;
+						f1 = Force.spring3(grains[iN], grains[9]);
+						SF[iN] = Vect3.add(SF[iN], f1);
+						f2 = Force.spring3(grains[iN], grains[17]);
+						SF[iN] = Vect3.add(SF[iN], f2);
+					}
+					else if (iN == 8){
+						var f1 = new Vect3;
+						var f2 = new Vect3;
+						f1 = Force.spring3(grains[iN], grains[16]);
+						SF[iN] = Vect3.add(SF[iN], f1);
+						f2 = Force.spring(grains[iN], grains[24]);
+						SF[iN] = Vect3.add(SF[iN], f2);
+					}
+					else{
+						if (iN%2==0){
+							var f1 = new Vect3;
+							var f2 = new Vect3;
+							var f3 = new Vect3;
+							var f4 = new Vect3;
+							
+							f1 = Force.spring3(grains[iN], grains[num]);
+							SF[iN] = Vect3.add(SF[iN], f1);
+							f2 = Force.spring(grains[iN], grains[num2]);
+							SF[iN] = Vect3.add(SF[iN], f2);
+							num++;
+							num2++;
+							f3 = Force.spring(grains[iN], grains[num]);
+							SF[iN] = Vect3.add(SF[iN], f3);
+							f4 = Force.spring(grains[iN], grains[num2]);
+							SF[iN] = Vect3.add(SF[iN], f4);
+							}
+						else{
+							var f1 = new Vect3;
+							var f2 = new Vect3;
+							var f3 = new Vect3;
+							var f4 = new Vect3;
+							
+							f1 = Force.spring(grains[iN], grains[num]);
+							SF[iN] = Vect3.add(SF[iN], f1);
+							f2 = Force.spring3(grains[iN], grains[num2]);
+							SF[iN] = Vect3.add(SF[iN], f2);
+							num++;
+							num2++;
+							f3 = Force.spring(grains[iN], grains[num]);
+							SF[iN] = Vect3.add(SF[iN], f3);
+							f4 = Force.spring(grains[iN], grains[num2]);
+							SF[iN] = Vect3.add(SF[iN], f4);
+						
+						}
+							
+						
+					}
+				console.log(SF[1]);
+				}
+				
+				
+				// Calculate normal force
+				for(var iN = 0; iN < N; iN++) {
+					for(var jN = 0; jN < N; jN++) {
+						var f = new Vect3;
+						if(jN != iN) {
+							f = Force.norm(grains[iN], grains[jN]);
+							SF[iN] = Vect3.add(SF[iN], f);
+						}
+					}
+				}
+				*/
+				var num=0;
+				var num2=0;
+				for(var iN = 0; iN < N; iN++) {
+					if (iN <2){
+						var f = new Vect3;
+						f = Force.spring(grains[iN], grains[iN+2]);
+						SF[iN] = Vect3.add(SF[iN], f);
+					}
+					else if (iN > (N-3)){
+						var f = new Vect3;
+						f = Force.spring(grains[iN], grains[iN-2]);
+						SF[iN] = Vect3.add(SF[iN], f);
+					}
+					else{
+							var f1 = new Vect3;
+							var f2 = new Vect3;
+							num=iN-2;
+							num2=iN+2;
+								f1 = Force.spring(grains[iN], grains[num]);
+								SF[iN] = Vect3.add(SF[iN], f1);
+								f2 = Force.spring(grains[iN], grains[num2]);
+								SF[iN] = Vect3.add(SF[iN], f2);
+								//SF[iN]=f;
+							
+						
+					}
+				//console.log(SF[2]);
+				}
+				
+				
+				var str = "t = " + t + " s";
+				var hout = document.getElementById("hout");
+				hout.innerHTML = str;
+				
+				clearCurrentFigure();
+				for(var iN = 0; iN < N; iN++) {
+					plotParticle(grains[iN]);
+				}
+				
+				for(var iN = 0; iN < N; iN++) {
+					Mdynamics.Euler(SF[iN], grains[iN]);
+				}
+				Mdynamics.inct();
+			}
+		</script>
+	</body>
+</html>
