@@ -14,7 +14,7 @@
 		<script>
 			
 			var timer1;
-			var N = 50;
+			var N = 15;
 			var grains = new Array(N);
 
 			layout();
@@ -32,18 +32,19 @@
 				//var Nx = Math.sqrt(N);
 				//var Ny = Math.sqrt(N);
 				var Nx = 9;
-				var Ny = 50;
-				var x0 = -18;
+				var Ny = 15;
+				var x0 = 0;
 				var y0 = -18;
+				var r = 2;
 				var i = 0;
 				var l = 2.5;
 				var teta=0;
 				var teta2=0;
 				for(var iy = 0; iy < Ny; iy++) {
-					var x = y0 + (iy + 0.5) * D + Math.cos(teta);
+					var x = x0 + Math.cos(teta); // (iy*l);
 						grains[i] = new Grain;
 						grains[i].i = i;
-						var y = x0 + (iy + 0.5) * D  + Math.sin(teta) ;
+						var y = y0 + Math.sin(teta)+(iy*l);
 						grains[i].r = new Vect3(x, y, 0);
 						var cR = 128;
 						var cG = (16 - i) * 16;
@@ -52,7 +53,7 @@
 						grains[i].c = c1;						
 						grains[i].D = 0.9 * D;
 						i++;
-						teta=teta+0.5;
+						teta=teta+1.05;
 						//teta2=teta2+0.2;
 					
 				}
@@ -200,7 +201,7 @@
 						}
 					}
 				}
-				*/
+				
 				for(var iN = 0; iN < N; iN++) {
 					if (iN == 0){
 						var f = new Vect3;
@@ -224,19 +225,39 @@
 					}
 				//console.log(SF[2]);
 				}
-				
 				/*
+				var f1 = new Vect3;
+				var f2 = new Vect3;
+				var f3 = new Vect3;
+				var f4 = new Vect3;
+				var f5 = new Vect3;
+				//f1 = Force.spring(grains[0], grains[1]);
+				//SF[0] = Vect3.add(SF[0], f1);
+				f2 = Force.spring(grains[1], grains[0]);
+				SF[1] = Vect3.add(SF[1], f2);
+				f3 = Force.spring(grains[2], grains[1]);
+				SF[2] = Vect3.add(SF[2], f3);
+				f4 = Force.spring(grains[3], grains[2]);
+				SF[3] = Vect3.add(SF[3], f4);
+				f5 = Force.spring(grains[4], grains[3]);
+				SF[4] = Vect3.add(SF[4], f5);
+				*/
+
+		
+				
+				
+				
 				var num=0;
 				var num2=0;
 				for(var iN = 0; iN < N; iN++) {
 					if (iN <2){
 						var f = new Vect3;
-						f = Force.spring(grains[iN], grains[iN+2]);
+						f = Force.spring3(grains[iN], grains[iN+2]);
 						SF[iN] = Vect3.add(SF[iN], f);
 					}
 					else if (iN > (N-3)){
 						var f = new Vect3;
-						f = Force.spring(grains[iN], grains[iN-2]);
+						f = Force.spring3(grains[iN], grains[iN-2]);
 						SF[iN] = Vect3.add(SF[iN], f);
 					}
 					else{
@@ -244,9 +265,9 @@
 							var f2 = new Vect3;
 							num=iN-2;
 							num2=iN+2;
-								f1 = Force.spring(grains[iN], grains[num]);
+								f1 = Force.spring3(grains[iN], grains[num]);
 								SF[iN] = Vect3.add(SF[iN], f1);
-								f2 = Force.spring(grains[iN], grains[num2]);
+								f2 = Force.spring3(grains[iN], grains[num2]);
 								SF[iN] = Vect3.add(SF[iN], f2);
 								//SF[iN]=f;
 							
@@ -254,7 +275,7 @@
 					}
 				//console.log(SF[2]);
 				}
-				*/
+				
 				
 				var str = "t = " + t + " s";
 				var hout = document.getElementById("hout");
